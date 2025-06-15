@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: nextjs-demo
+metadata:
+  template: nextjs-demo@0.0.1-beta
+
+services:
+  bookshare-app:
+    project: .
+    language: ts
+    host: containerapp
+
+hooks:
+  preprovision:
+    shell: sh
+    run: |
+      # Validate environment variables
+      if [ -z "$NEXTAUTH_SECRET" ]; then
+        echo "NEXTAUTH_SECRET environment variable is required"
+        exit 1
+      fi
+      
+      # Generate NEXTAUTH_URL if not set
+      if [ -z "$NEXTAUTH_URL" ]; then
+        export NEXTAUTH_URL="https://ca-bookshare-app-${AZURE_ENV_NAME}.${AZURE_LOCATION}.azurecontainerapps.io"
+        echo "Generated NEXTAUTH_URL: $NEXTAUTH_URL"
+      fi
