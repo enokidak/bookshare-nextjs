@@ -1,0 +1,9 @@
+{
+    "WillLuke.nextjs.addTypesOnSave": true,
+    "WillLuke.nextjs.hasPrompted": true,
+    "git.inputValidation": true,
+    "git.inputValidationLength": 72,
+    "git.inputValidationSubjectLength": 50,
+    "git.enableSmartCommit": true,
+    "git.confirmSync": false
+}

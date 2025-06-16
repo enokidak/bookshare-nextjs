@@ -1,0 +1,58 @@
+#!/bin/sh
+# Git hook to validate commit message format
+# Place this file in .githooks/commit-msg and make it executable
+
+# コミットメッセージのフォーマットを検証するGitフック
+# このファイルを .githooks/commit-msg に配置し、実行可能にしてください
+
+commit_message_file=$1
+commit_message=$(cat "$commit_message_file")
+
+# コミットメッセージの正規表現パターン
+# タイプ(スコープ): 説明文 の形式
+commit_regex='^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .{1,50}$'
+
+# マージコミットは除外
+if echo "$commit_message" | grep -q "^Merge"; then
+    exit 0
+fi
+
+# revertコミットは除外
+if echo "$commit_message" | grep -q "^Revert"; then
+    exit 0
+fi
+
+# コミットメッセージの最初の行をチェック
+first_line=$(echo "$commit_message" | head -n1)
+
+if ! echo "$first_line" | grep -qE "$commit_regex"; then
+    echo "❌ 無効なコミットメッセージフォーマットです！"
+    echo ""
+    echo "正しいフォーマット: type(scope): description"
+    echo ""
+    echo "利用可能なタイプ:"
+    echo "  feat:     新機能"
+    echo "  fix:      バグ修正"
+    echo "  docs:     ドキュメント"
+    echo "  style:    スタイル変更"
+    echo "  refactor: リファクタリング"
+    echo "  test:     テスト"
+    echo "  chore:    その他"
+    echo ""
+    echo "例:"
+    echo "  feat: ユーザー認証機能を追加"
+    echo "  fix: ログインバリデーションエラーを修正"
+    echo "  docs(api): API仕様書を更新"
+    echo ""
+    echo "現在のメッセージ: $first_line"
+    exit 1
+fi
+
+# 件名が50文字を超えているかチェック
+if [ ${#first_line} -gt 50 ]; then
+    echo "⚠️  警告: 件名が50文字を超えています (${#first_line}文字)"
+    echo "件名: $first_line"
+fi
+
+echo "✅ コミットメッセージは有効です"
+exit 0
