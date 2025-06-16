@@ -2,26 +2,37 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 export async function GET() {
-  console.log('Health check API called')
+  const isProduction = process.env.NODE_ENV === 'production'
+  
+  // 本番環境ではログを最小限に抑制
+  if (!isProduction) {
+    console.log('Health check API called')
+  }
   
   try {
     // 環境変数の確認
     const databaseUrl = process.env.DATABASE_URL
-    console.log('DATABASE_URL exists:', !!databaseUrl)
-    console.log('DATABASE_URL is set and sanitized for logging purposes.')
     
-    // Next.js環境の確認
-    console.log('NODE_ENV:', process.env.NODE_ENV)
-    console.log('Current working directory:', process.cwd())
+    if (!isProduction) {
+      console.log('Environment check:', {
+        databaseUrlExists: !!databaseUrl,
+        nodeEnv: process.env.NODE_ENV,
+        cwd: process.cwd()
+      })
+    }
     
     // Prismaの接続テスト
-    console.log('Testing Prisma connection...')
+    if (!isProduction) {
+      console.log('Testing Prisma connection...')
+    }
     await prisma.$connect()
-    console.log('Prisma connection successful')
     
     // 基本的なデータベースクエリテスト
     const result = await prisma.$queryRaw`SELECT 1 as test`
-    console.log('Database query test result:', result)
+    
+    if (!isProduction) {
+      console.log('Database connection test successful:', result)
+    }
     
     return NextResponse.json({
       status: 'healthy',
@@ -30,13 +41,11 @@ export async function GET() {
       timestamp: new Date().toISOString()
     })
   } catch (error) {
-    console.error('Health check failed:')
-    if (error instanceof Error) {
-      console.error('Error name:', error.name)
-      console.error('Error message:', error.message)
-      console.error('Error stack:', error.stack)
-    }
-    console.error('Full error object:', error)
+    const errorDetails = error instanceof Error 
+      ? { name: error.name, message: error.message, stack: error.stack }
+      : { error: String(error) }
+    
+    console.error('Health check failed:', errorDetails)
     
     return NextResponse.json(
       { 

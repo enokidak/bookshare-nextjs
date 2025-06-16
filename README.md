@@ -61,7 +61,8 @@ npm run dev
 
 - `npm run db:generate` - Prismaクライアントを生成
 - `npm run db:push` - スキーマをデータベースにプッシュ
-- `npm run db:migrate` - マイグレーションを作成・実行
+- `npm run db:migrate` - マイグレーションを作成・実行（開発用）
+- `npm run db:migrate:deploy` - マイグレーションを実行（本番用）
 - `npm run db:reset` - データベースをリセット
 
 ### 環境の違い
