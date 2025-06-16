@@ -1,0 +1,42 @@
+services:
+  # PostgreSQL データベース
+  postgres:
+    image: postgres:15
+    container_name: nextjs-bookshare-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bookshare
+      POSTGRES_USER: bookshare_user
+      POSTGRES_PASSWORD: bookshare_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bookshare_user -d bookshare"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Next.js アプリケーション
+  app:
+    build: .
+    container_name: nextjs-bookshare-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://bookshare_user:bookshare_password@postgres:5432/bookshare
+      - NEXTAUTH_SECRET=your-super-secret-key-change-in-production-make-it-long-and-random
+      - NEXTAUTH_URL=http://localhost:3000
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # volumes:
+      # - .:/app
+      # - /app/node_modules
+      # - /app/.next
+
+volumes:
+  postgres_data:
