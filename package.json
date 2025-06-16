@@ -10,7 +10,9 @@
     "test": "echo \"No tests specified\" && exit 0",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev"
+    "db:migrate": "prisma migrate dev",
+    "db:reset": "prisma migrate reset",
+    "db:seed": "prisma db seed"
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
