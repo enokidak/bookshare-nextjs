@@ -40,8 +40,8 @@ npm install
 
 3. 環境変数を設定
 ```bash
-cp .env .env.local
-# .env.localファイルを編集して適切な値を設定
+# .envファイルは既に存在し、ローカル開発用に設定されています
+# DATABASE_URL="file:./dev.db" (SQLite)
 ```
 
 4. データベースの初期化
@@ -49,6 +49,25 @@ cp .env .env.local
 npm run db:generate
 npm run db:push
 ```
+
+5. 開発サーバーを起動
+```bash
+npm run dev
+```
+
+ブラウザで http://localhost:3000 を開いてアプリケーションにアクセスできます。
+
+### データベース管理
+
+- `npm run db:generate` - Prismaクライアントを生成
+- `npm run db:push` - スキーマをデータベースにプッシュ
+- `npm run db:migrate` - マイグレーションを作成・実行
+- `npm run db:reset` - データベースをリセット
+
+### 環境の違い
+
+- **ローカル開発**: SQLite データベース (`prisma/dev.db`)
+- **本番環境**: インメモリSQLiteまたは外部データベース（環境変数で設定）
 
 5. 開発サーバーを起動
 ```bash
