@@ -8,11 +8,6 @@ export async function GET() {
   console.log('GET /api/books called')
   
   try {
-    // Prisma接続テスト
-    console.log('Testing Prisma connection...')
-    await prisma.$connect()
-    console.log('Prisma connection successful')
-    
     console.log('Fetching books from database...')
     const books = await prisma.book.findMany({
       include: {
@@ -56,8 +51,7 @@ export async function GET() {
     
     return NextResponse.json(
       { 
-        error: 'サーバーエラーが発生しました',
-        details: error instanceof Error ? error.message : String(error)
+        error: 'サーバーエラーが発生しました'
       },
       { status: 500 }
     )

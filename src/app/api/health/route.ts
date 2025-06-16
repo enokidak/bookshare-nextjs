@@ -8,7 +8,7 @@ export async function GET() {
     // 環境変数の確認
     const databaseUrl = process.env.DATABASE_URL
     console.log('DATABASE_URL exists:', !!databaseUrl)
-    console.log('DATABASE_URL preview:', databaseUrl ? databaseUrl.substring(0, 20) + '...' : 'undefined')
+    console.log('DATABASE_URL is set and sanitized for logging purposes.')
     
     // Next.js環境の確認
     console.log('NODE_ENV:', process.env.NODE_ENV)

@@ -66,8 +66,9 @@ npm run dev
 
 ### 環境の違い
 
-- **ローカル開発**: SQLite データベース (`prisma/dev.db`)
-- **本番環境**: インメモリSQLiteまたは外部データベース（環境変数で設定）
+- **ローカル開発（従来）**: SQLite データベース (`prisma/dev.db`)
+- **Docker環境**: PostgreSQL データベース（docker-compose.yml）
+- **本番環境**: PostgreSQL データベース（環境変数で設定）
 
 5. 開発サーバーを起動
 ```bash
@@ -75,6 +76,20 @@ npm run dev
 ```
 
 アプリケーションは http://localhost:3000 で確認できます。
+
+### Docker Composeでの起動（推奨）
+
+PostgreSQLと併せて起動する場合：
+
+```bash
+# PostgreSQLコンテナとアプリケーションを一緒に起動
+docker-compose up --build
+
+# バックグラウンドで実行
+docker-compose up -d --build
+```
+
+アプリケーションは http://localhost:3000 で確認でき、PostgreSQLデータベースが自動的に設定されます。
 
 ## 本番環境デプロイ
 
