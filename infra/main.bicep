@@ -13,7 +13,7 @@ param appName string
 param containerImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 
 @description('Database URL for the application')
-param databaseUrl string
+param databaseUrl string = 'file::memory:?cache=shared'
 
 @description('NextAuth secret key')
 @secure()
