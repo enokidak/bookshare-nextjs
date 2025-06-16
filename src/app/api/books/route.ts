@@ -5,7 +5,15 @@ import { prisma } from '@/lib/prisma'
 
 // GET /api/books - 全ての本を取得
 export async function GET() {
+  console.log('GET /api/books called')
+  
   try {
+    // Prisma接続テスト
+    console.log('Testing Prisma connection...')
+    await prisma.$connect()
+    console.log('Prisma connection successful')
+    
+    console.log('Fetching books from database...')
     const books = await prisma.book.findMany({
       include: {
         owner: {
@@ -34,12 +42,23 @@ export async function GET() {
         createdAt: 'desc',
       },
     })
-
+    
+    console.log(`Successfully fetched ${books.length} books`)
     return NextResponse.json(books)
   } catch (error) {
-    console.error('Error fetching books:', error)
+    console.error('Error fetching books:')
+    if (error instanceof Error) {
+      console.error('Error name:', error.name)
+      console.error('Error message:', error.message)
+      console.error('Error stack:', error.stack)
+    }
+    console.error('Full error object:', error)
+    
     return NextResponse.json(
-      { error: 'サーバーエラーが発生しました' },
+      { 
+        error: 'サーバーエラーが発生しました',
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     )
   }
