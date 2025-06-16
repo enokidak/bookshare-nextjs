@@ -5,8 +5,8 @@ echo "Starting application initialization..."
 
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
-until pg_isready -h postgres -p 5432 -U bookshare_user; do
-  echo "Waiting for postgres..."
+until pg_isready -h "${DB_HOST:-postgres}" -p "${DB_PORT:-5432}" -U "${DB_USER:-bookshare_user}"; do
+  echo "Waiting for postgres at ${DB_HOST:-postgres}:${DB_PORT:-5432} with user ${DB_USER:-bookshare_user}..."
   sleep 2
 done
 

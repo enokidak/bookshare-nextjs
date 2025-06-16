@@ -39,9 +39,21 @@ npm install
 ```
 
 3. 環境変数を設定
+
+**ローカル開発（SQLite）の場合:**
 ```bash
 # .envファイルは既に存在し、ローカル開発用に設定されています
+# 内容を確認・編集する場合:
+cat .env
 # DATABASE_URL="file:./dev.db" (SQLite)
+# NEXTAUTH_SECRET="your-secret-key"
+# NEXTAUTH_URL="http://localhost:3000"
+```
+
+**Docker環境（PostgreSQL）の場合:**
+```bash
+# docker-compose.ymlで自動設定されるため手動設定不要
+# 設定を変更したい場合はdocker-compose.yml内の環境変数を編集
 ```
 
 4. データベースの初期化
@@ -64,6 +76,15 @@ npm run dev
 - `npm run db:migrate` - マイグレーションを作成・実行（開発用）
 - `npm run db:migrate:deploy` - マイグレーションを実行（本番用）
 - `npm run db:reset` - データベースをリセット
+
+### テスト
+
+現在のテストスクリプト:
+- `npm run test` - テストフレームワーク設定が必要
+- `npm run test:watch` - テスト監視モード（設定後）
+- `npm run test:coverage` - カバレッジレポート（設定後）
+
+テスト環境のセットアップについては `docs/testing-guide.md` を参照してください。
 
 ### 環境の違い
 

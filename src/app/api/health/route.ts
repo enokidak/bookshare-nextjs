@@ -21,25 +21,24 @@ export async function GET() {
       })
     }
     
-    // Prismaの接続テスト
-    if (!isProduction) {
-      console.log('Testing Prisma connection...')
+    try {
+      // 基本的なデータベースクエリテスト（Prismaが自動で接続管理）
+      const result = await prisma.$queryRaw`SELECT 1 as test`
+      
+      if (!isProduction) {
+        console.log('Database connection test successful:', result)
+      }
+      
+      return NextResponse.json({
+        status: 'healthy',
+        database: 'connected',
+        environment: process.env.NODE_ENV,
+        timestamp: new Date().toISOString()
+      })
+    } finally {
+      // リクエスト後に明示的に切断してリソース管理
+      await prisma.$disconnect()
     }
-    await prisma.$connect()
-    
-    // 基本的なデータベースクエリテスト
-    const result = await prisma.$queryRaw`SELECT 1 as test`
-    
-    if (!isProduction) {
-      console.log('Database connection test successful:', result)
-    }
-    
-    return NextResponse.json({
-      status: 'healthy',
-      database: 'connected',
-      environment: process.env.NODE_ENV,
-      timestamp: new Date().toISOString()
-    })
   } catch (error) {
     const errorDetails = error instanceof Error 
       ? { name: error.name, message: error.message, stack: error.stack }

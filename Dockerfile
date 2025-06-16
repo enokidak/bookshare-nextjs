@@ -20,8 +20,8 @@ COPY eslint.config.mjs ./
 # Generate Prisma client
 RUN npx prisma generate
 
-# Set build-time environment variables (without sensitive data)
-ENV DATABASE_URL="postgresql://user:password@localhost:5432/database"
+# Set build-time environment variables (placeholder for build only)
+ENV DATABASE_URL="postgresql://placeholder:placeholder@placeholder:5432/placeholder"
 
 # Build the application
 RUN npm run build
