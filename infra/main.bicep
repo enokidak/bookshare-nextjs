@@ -12,8 +12,11 @@ param appName string
 @description('Container image name')
 param containerImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 
-@description('Database URL for the application')
-param databaseUrl string
+@description('Database name for PostgreSQL add-on')
+param databaseName string = 'bookshare'
+
+@description('Database server name for PostgreSQL add-on')  
+param postgresServerName string = 'postgres-addon'
 
 @description('NextAuth secret key')
 @secure()
@@ -137,11 +140,13 @@ resource nextAuthSecretKv 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
   }
 }
 
+// Note: Database URL will be dynamically generated after PostgreSQL add-on is created
+// This is a placeholder that will be updated via Azure CLI after add-on deployment
 resource databaseUrlKv 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
   parent: keyVault
   name: 'database-url'
   properties: {
-    value: databaseUrl
+    value: 'postgresql://placeholder:placeholder@${postgresServerName}:5432/${databaseName}'
   }
 }
 
@@ -237,6 +242,10 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
               secretRef: 'database-url'
             }
             {
+              name: 'POSTGRES_URL'
+              secretRef: 'database-url'
+            }
+            {
               name: 'NEXTAUTH_SECRET'
               secretRef: 'nextauth-secret'
             }
@@ -275,4 +284,10 @@ output keyVaultName string = keyVault.name
 output applicationInsightsConnectionString string = applicationInsights.properties.ConnectionString
 output logAnalyticsWorkspaceId string = logAnalytics.id
 output RESOURCE_GROUP_ID string = resourceGroup().id
+output containerAppEnvironmentName string = containerAppEnvironment.name
+output postgresServerName string = postgresServerName
+output databaseName string = databaseName
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerRegistry.properties.loginServer
+output AZURE_CONTAINER_REGISTRY_NAME string = containerRegistry.name
+output NEXTAUTH_URL string = 'https://${containerApp.properties.configuration.ingress.fqdn}'
+output WEB_URI string = 'https://${containerApp.properties.configuration.ingress.fqdn}'

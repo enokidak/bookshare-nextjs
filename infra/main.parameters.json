@@ -14,8 +14,11 @@
     "containerImage": {
       "value": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
     },
-    "databaseUrl": {
-      "value": "postgresql://<username>:<password>@<host>:<port>/<database>"
+    "databaseName": {
+      "value": "bookshare"
+    },
+    "postgresServerName": {
+      "value": "postgres-addon"
     },
     "nextAuthSecret": {
       "value": "${NEXTAUTH_SECRET}"

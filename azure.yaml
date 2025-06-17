@@ -20,8 +20,16 @@ hooks:
         exit 1
       fi
       
-      # Generate NEXTAUTH_URL if not set
-      if [ -z "$NEXTAUTH_URL" ]; then
+      # Generate NEXTAUTH_URL if not set for production
+      if [ -z "$NEXTAUTH_URL" ] || [ "$NEXTAUTH_URL" = "http://localhost:3000" ]; then
         export NEXTAUTH_URL="https://ca-bookshare-app-${AZURE_ENV_NAME}.${AZURE_LOCATION}.azurecontainerapps.io"
         echo "Generated NEXTAUTH_URL: $NEXTAUTH_URL"
+        azd env set NEXTAUTH_URL "$NEXTAUTH_URL"
       fi
+  
+  postprovision:
+    shell: sh
+    run: |
+      # Setup PostgreSQL Add-on after infrastructure is provisioned
+      echo "Setting up PostgreSQL Add-on..."
+      ./scripts/setup-postgres-addon.sh
