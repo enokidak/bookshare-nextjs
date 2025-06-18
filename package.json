@@ -15,18 +15,23 @@
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:reset": "prisma migrate reset",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "db:sqlite": "node scripts/switch-db.js sqlite",
+    "db:postgresql": "node scripts/switch-db.js postgresql",
+    "db:switch": "echo 'Run npm run db:sqlite or npm run db:postgresql to switch database'"
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/pg": "^8.15.4",
     "bcryptjs": "^3.0.2",
     "date-fns": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.515.0",
     "next": "15.3.3",
     "next-auth": "^4.24.11",
+    "pg": "^8.16.0",
     "prisma": "^6.9.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

@@ -3,35 +3,21 @@ set -e
 
 echo "Starting application initialization..."
 
-# Extract database connection info from DATABASE_URL or POSTGRES_URL
-DB_URL="${DATABASE_URL:-$POSTGRES_URL}"
-if [ -n "$DB_URL" ]; then
-    # Parse DATABASE_URL to extract host, port, and user
-    # postgresql://user:password@host:port/database
-    DB_HOST=$(echo "$DB_URL" | sed -n 's|.*://[^:]*:[^@]*@\([^:]*\):.*|\1|p')
-    DB_PORT=$(echo "$DB_URL" | sed -n 's|.*://[^:]*:[^@]*@[^:]*:\([0-9]*\)/.*|\1|p')
-    DB_USER=$(echo "$DB_URL" | sed -n 's|.*://\([^:]*\):.*|\1|p')
-    
-    # Set defaults if extraction fails
-    DB_HOST="${DB_HOST:-postgres-addon}"
-    DB_PORT="${DB_PORT:-5432}"
-    DB_USER="${DB_USER:-postgres}"
-else
-    # Fallback to environment variables or defaults
-    DB_HOST="${DB_HOST:-postgres-addon}"
-    DB_PORT="${DB_PORT:-5432}"
-    DB_USER="${DB_USER:-postgres}"
-fi
-
-echo "Database connection details:"
-echo "- Host: $DB_HOST"
-echo "- Port: $DB_PORT"
-echo "- User: $DB_USER"
-
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
-until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER"; do
-  echo "Waiting for postgres at $DB_HOST:$DB_PORT with user $DB_USER..."
+
+# Extract database connection details from DATABASE_URL if individual env vars are not set
+if [ -n "$DATABASE_URL" ] && [ -z "$DB_HOST" ]; then
+  # Parse DATABASE_URL: postgresql://user:password@host:port/database
+  DB_HOST=$(echo $DATABASE_URL | sed -n 's/.*@\([^:]*\):.*/\1/p')
+  DB_PORT=$(echo $DATABASE_URL | sed -n 's/.*:\([0-9]*\)\/.*/\1/p')
+  DB_USER=$(echo $DATABASE_URL | sed -n 's/.*:\/\/\([^:]*\):.*/\1/p')
+  export DB_HOST DB_PORT DB_USER
+  echo "Extracted from DATABASE_URL: host=$DB_HOST, port=$DB_PORT, user=$DB_USER"
+fi
+
+until pg_isready -h "${DB_HOST:-postgres}" -p "${DB_PORT:-5432}" -U "${DB_USER:-bookshare_user}"; do
+  echo "Waiting for postgres at ${DB_HOST:-postgres}:${DB_PORT:-5432} with user ${DB_USER:-bookshare_user}..."
   sleep 2
 done
 
